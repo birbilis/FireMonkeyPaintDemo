@@ -6,11 +6,5 @@ object filebrowseopenfrm: Tfilebrowseopenfrm
   ClientWidth = 384
   FormFactor.Width = 320
   FormFactor.Height = 480
-  FormFactor.Devices = [dkDesktop]
-  DesignerMobile = True
-  DesignerWidth = 384
-  DesignerHeight = 592
-  DesignerDeviceName = 'Google Nexus 4'
-  DesignerOrientation = 0
-  DesignerOSVersion = ''
+  DesignerMasterStyle = 3
 end

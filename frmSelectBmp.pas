@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.StdCtrls, System.Actions, FMX.ActnList, FMX.StdActns,
-  FMX.MediaLibrary.Actions;
+  FMX.MediaLibrary.Actions, FMX.Controls.Presentation;
 
 type
   TSelectBmpfrm = class(TForm)
@@ -24,10 +24,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ImgPaint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
-    procedure ImgMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Single);
-    procedure ImgMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Single);
+    procedure ImgMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+    procedure ImgMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
     procedure ImgMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Single);
     procedure actOpenCustomExecute(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
@@ -132,7 +130,7 @@ begin
   fbmp:= TBitmap.Create(0, 0);
   frectP1:=PointF(img.Width/2-img.Width/4,img.Height/2-img.Height/4);
   frectP2:=PointF(img.Width/2+img.Width/4,img.Height/2+img.Height/4);
-  fcstroke:=TStrokeBrush.Create(TBrushKind.bkSolid,TAlphaColorRec.Blue);
+  fcstroke:=TStrokeBrush.Create(TBrushKind.Solid, TAlphaColorRec.Blue);
   fcstroke.DefaultColor:=TAlphaColorRec.Blue;
   fcstroke.Thickness:=1;
 {$IF Defined(MSWINDOWS) or Defined(MACOS)}
@@ -165,27 +163,29 @@ begin
   begin
     d:=abs(Y-frectP1.Y);
     ftypemoving:=2;
+
     if (d>abs(X-frectP2.X)) then
     begin
       ftypemoving:=3;
       d:=abs(X-frectP2.X)
     end;
+
     if (d>abs(Y-frectP2.Y)) then
     begin
       ftypemoving:=4;
-      d:=abs(Y-frectP2.Y)
+      d:=abs(Y-frectP2.Y);
     end;
+
     if (d>abs(X-frectP1.X)) then
     begin
       ftypemoving:=5;
-      d:=abs(X-frectP1.X)
+      d:=abs(X-frectP1.X);
     end;
 
   end;
 end;
 
-procedure TSelectBmpfrm.ImgMouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Single);
+procedure TSelectBmpfrm.ImgMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Single);
 var
   dy,dx:Single;
 begin
@@ -194,16 +194,16 @@ begin
   dy:=Y-startY;
   if (ftypemoving=1) then
   begin
-  if (frectP1.X+dx<img.Width)  and (frectP1.X+dx>=0) and (frectP2.X+dx<img.Width)  and (frectP2.X+dx>=0) then
-  begin
-      frectP1.X:=frectP1.X+dx;
-      frectP2.X:=frectP2.X+dx;
-  end;
-  if (frectP1.Y+dy<img.Height)  and (frectP1.Y+dy>=0) and (frectP2.Y+dy<img.Height)  and (frectP2.Y+dy>=0)then
-  begin
-      frectP1.Y:=frectP1.Y+dy;
-      frectP2.Y:=frectP2.Y+dy;
-  end;
+    if (frectP1.X+dx<img.Width)  and (frectP1.X+dx>=0) and (frectP2.X+dx<img.Width)  and (frectP2.X+dx>=0) then
+    begin
+        frectP1.X:=frectP1.X+dx;
+        frectP2.X:=frectP2.X+dx;
+    end;
+    if (frectP1.Y+dy<img.Height)  and (frectP1.Y+dy>=0) and (frectP2.Y+dy<img.Height)  and (frectP2.Y+dy>=0)then
+    begin
+        frectP1.Y:=frectP1.Y+dy;
+        frectP2.Y:=frectP2.Y+dy;
+    end;
   end
   else if (ftypemoving=2) then
   begin
@@ -246,7 +246,7 @@ begin
   inherited;
   r:=TRectF.Create(frectP1,frectP2);
   Canvas.BeginScene();
-  Canvas.DrawRect(r,0,0,[TCorner.crTopLeft],1,fcstroke);
+  Canvas.DrawRect(r,0,0,[TCorner.TopLeft],1,fcstroke);
   Canvas.EndScene;
 
 end;
@@ -275,6 +275,7 @@ begin
   dlg.Free;
 end;
 {$ENDIF}
+
 procedure TSelectBmpfrm.repairRePaint;
 begin
   if not assigned(fbmp) then exit;
@@ -305,6 +306,4 @@ self.Hide();
 end;
 
 end.
-
-
 

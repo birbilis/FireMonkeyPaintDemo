@@ -83,7 +83,7 @@ begin
   inherited;
   fbmpstamp:=nil;
   Parent:=TFmxObject(AOwner);
-  Align:= TAlignLayout.alClient;
+  Align:= TAlignLayout.Client;
   ffDraw:=TFunctionDraw.fdPen;
   fnofill:=false;
   fDrawing:=false;
@@ -102,12 +102,10 @@ begin
   {$IFDEF POSIX}
   FFillerMod;
   {$ENDIF}
-
 end;
 
 destructor TMyPaintBox.Destroy;
 begin
-
   if (assigned(fcbrush)) then
     fcbrush.Free;
   if (assigned(fcstroke)) then
@@ -121,6 +119,7 @@ begin
   if assigned ( ffillBrush ) then
     FreeAndNil ( ffillBrush );
   {$ENDIF}
+
   inherited;
 end;
 
@@ -146,8 +145,8 @@ begin
   end;
   TFunctionDraw.fdRectangle:begin
       if not fnofill then
-        FillRect(r,0,0,[TCorner.crTopLeft],1,fcbrush);
-      DrawRect(r,0,0,[TCorner.crTopLeft],1,fcstroke);
+        FillRect(r,0,0,[TCorner.TopLeft],1,fcbrush);
+      DrawRect(r,0,0,[TCorner.TopLeft],1,fcstroke);
   end;
   TFunctionDraw.fdEllipse:begin
     if not fnofill then
@@ -466,7 +465,7 @@ begin
   if (assigned(fcbrush)) then
     fcbrush.Free;
   fbgColor:=v;
-  fcbrush:=TBrush.Create(TBrushKind.bkSolid,fbgColor);
+  fcbrush:=TBrush.Create(TBrushKind.Solid,fbgColor);
 end;
 
 procedure TMyPaintBox.SetBitmapStamp(v: TBitmap);
@@ -485,21 +484,19 @@ begin
     fcstroke.Free;
   ffgColor:=v;
 
-  fcstroke:=TStrokeBrush.Create(TBrushKind.bkSolid,ffgColor);
+  fcstroke:=TStrokeBrush.Create(TBrushKind.Solid,ffgColor);
   fcstroke.DefaultColor:=ffgColor;
   fcstroke.Thickness:=fThickness;
 
   {$IFDEF POSIX}
   ffillermod;
   {$ENDIF}
-
 end;
 
 procedure TMyPaintBox.SetNoFill(v: boolean);
 begin
   if fnofill<>v then
     fnofill:=v;
-
 end;
 
 procedure TMyPaintBox.SetThickness(v: Single);
@@ -509,10 +506,10 @@ begin
     fcstroke.Free;
   fThickness:=v;
 
-  fcstroke:=TStrokeBrush.Create(TBrushKind.bkSolid,ffgColor);
+  fcstroke:=TStrokeBrush.Create(TBrushKind.Solid,ffgColor);
   fcstroke.DefaultColor:=ffgColor;
   fcstroke.Thickness:=fThickness;
-  fcstroke.Cap := TStrokeCap.scRound;
+  fcstroke.Cap := TStrokeCap.Round;
 
   {$IFDEF POSIX}
   ffillermod;
