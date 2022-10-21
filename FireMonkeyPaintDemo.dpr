@@ -3,7 +3,7 @@ program FireMonkeyPaintDemo;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  MyPaintBox in 'MyPaintBox.pas',
+  uPaintBox in 'uPaintBox.pas',
   uMain in 'uMain.pas' {MainForm},
   frmfilebrowseopen in 'frmfilebrowseopen.pas' {filebrowseopenfrm},
   frmSelectBmp in 'frmSelectBmp.pas' {SelectBmpfrm};

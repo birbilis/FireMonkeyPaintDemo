@@ -1,4 +1,4 @@
-unit MyPaintBox;
+unit uPaintBox;
 
 interface
 

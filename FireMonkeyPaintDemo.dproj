@@ -230,7 +230,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="MyPaintBox.pas"/>
+        <DCCReference Include="uPaintBox.pas"/>
         <DCCReference Include="uMain.pas">
             <Form>MainForm</Form>
             <FormType>fmx</FormType>

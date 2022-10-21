@@ -4,7 +4,7 @@ interface
 
 uses
   System.IOUtils, System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,MyPaintBox,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, uPaintBox,
   FMX.StdCtrls, FMX.Colors, FMX.ExtCtrls, FMX.ListBox, FMX.ListView.Types,
   FMX.ListView, FMX.Layouts, FMX.Objects, FMX.Edit, System.Actions,
   FMX.ActnList, FMX.StdActns, FMX.MediaLibrary.Actions, FMX.EditBox,
