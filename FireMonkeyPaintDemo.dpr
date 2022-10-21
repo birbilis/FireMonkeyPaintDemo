@@ -10,7 +10,7 @@ uses
 
 {$R *.res}
 
-begin
+begin //TODO: add memory leak checking on exit
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TSelectBmpfrm, SelectBmpfrm);

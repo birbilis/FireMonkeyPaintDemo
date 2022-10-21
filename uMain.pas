@@ -134,26 +134,26 @@ end;
 
 procedure TMainForm.SpeedButton1Click(Sender: TObject);
 var
-sfile:string;
-fs:TFileStream;
+  sfile:string;
+  fs:TFileStream;
 begin
-sfile:=InputBox('Save File','Input File Name','sample.jpg');
-if (sfile<>'') then
-begin
-sfile:=System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetDocumentsPath(),sfile);
-  try
+  sfile:=InputBox('Save File','Input File Name','sample.jpg'); //TODO: [dcc32 Warning] uMain.pas(140): W1000 Symbol 'InputBox' is deprecated: 'Use FMX.DialogService methods'
+  if (sfile<>'') then
+  begin
+    sfile:=System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetDocumentsPath(),sfile);
     fs:=TFileStream.Create(sfile,fmCreate);
-    fdrawbox.SaveToJPEGStream(fs);
-    fs.Free;
-  finally
+    try
+      fdrawbox.SaveToJPEGStream(fs);
+    finally
+      fs.Free;
+    end;
   end;
-
-end;
 end;
 
 procedure TMainForm.SpeedButton2Click(Sender: TObject);
 begin
-  CloseModal;
+  //CloseModal; //this does nothing in Delphi 11
+  Close; //Closing the main form terminates the Application
 end;
 
 end.

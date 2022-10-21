@@ -159,7 +159,7 @@ end;
 
 procedure TSelectBmpfrm.ImgMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 var
-  d,ty,tx:Single;
+  d, ty, tx:Single; //TODO: what's the use of d?
 begin
   startX:=X;
   startY:=Y;

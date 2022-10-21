@@ -132,76 +132,76 @@ begin
 
   if (ffdraw=TFunctionDraw.fdNone) or (not fdrawing) then exit;
 
-  r := TRectF.Create(pFrom,pTo);
+  r := TRectF.Create(pFrom, pTo);
 
   with vCanvas do
-  begin
-    BeginScene;
+    if BeginScene then
+      try
 
-    case ffdraw of
-      {$IFDEF MSWINDOWS}
-      TFunctionDraw.fdPen:
-      begin
-          DrawLine(pFrom,pTo,1,fcstroke);
-      end;
-      {$ENDIF}
+        case ffdraw of
+          {$IFDEF MSWINDOWS}
+          TFunctionDraw.fdPen:
+            DrawLine(pFrom,pTo,1,fcstroke);
+          {$ENDIF}
 
-      TFunctionDraw.fdLine:
-      begin
-          DrawLine(pFrom,pTo,1,fcstroke);
-      end;
+          TFunctionDraw.fdLine:
+            DrawLine(pFrom,pTo,1,fcstroke);
 
-      TFunctionDraw.fdRectangle:
-      begin
-          if not fnofill then
-            FillRect(r,0,0,[TCorner.TopLeft],1,fcbrush);
-          DrawRect(r,0,0,[TCorner.TopLeft],1,fcstroke);
-      end;
+          TFunctionDraw.fdRectangle:
+          begin
+              if not fnofill then
+                FillRect(r,0,0,[TCorner.TopLeft],1,fcbrush);
+              DrawRect(r,0,0,[TCorner.TopLeft],1,fcstroke);
+          end;
 
-      TFunctionDraw.fdEllipse:
-      begin
-        if not fnofill then
-          FillEllipse(r,1,fcbrush);
+          TFunctionDraw.fdEllipse:
+          begin
+            if not fnofill then
+              FillEllipse(r,1,fcbrush);
 
-        {$IFDEF VER310}
-        DrawEllipse(r,1,fcstroke);
-        {$ENDIF}
-      end;
+            {$IFDEF VER310}
+            DrawEllipse(r,1,fcstroke);
+            {$ENDIF}
+          end;
 
-      TFunctionDraw.fdFillBgr:
-      begin
-          Clear(fbgColor);
-      end;
+          TFunctionDraw.fdFillBgr:
+            Clear(fbgColor);
 
-      TFunctionDraw.fdBitmapStamp:
-        if (Assigned(fbmpstamp)) then
-        begin
-          r := TRectF.Create(PointF(0,0),fbmpstamp.Width,fbmpstamp.Height);
-          rd := TRectF.Create(PointF(pTo.X,pTo.Y),fbmpstamp.Width,fbmpstamp.Height);
-          DrawBitmap(fbmpstamp,r,rd,1);
+          TFunctionDraw.fdBitmapStamp:
+            if (Assigned(fbmpstamp)) then
+            begin
+              r := TRectF.Create(PointF(0,0),fbmpstamp.Width,fbmpstamp.Height);
+              rd := TRectF.Create(PointF(pTo.X,pTo.Y),fbmpstamp.Width,fbmpstamp.Height);
+              DrawBitmap(fbmpstamp,r,rd,1);
+            end;
+
         end;
 
-    end;
+      finally
+        EndScene;
+      end;
 
-    EndScene;
-  end;
 end;
 
-procedure TMyPaintBox.StampBitmap(X,Y: Single; B: TBitmap);
+procedure TMyPaintBox.StampBitmap(X, Y: Single; B: TBitmap);
 var
-r,rd:TRectF;
+  r, rd:TRectF;
 begin
   with fdrawbmp.Canvas do
-  begin
-  BeginScene();
-    if (Assigned(B)) then
-     begin
-      r := TRectF.Create(PointF(0,0),B.Width,B.Height);
-      rd := TRectF.Create(PointF(X,Y),B.Width,B.Height);
-      DrawBitmap(B,r,rd,1);
-     end;
-  EndScene;
-  end;
+    if BeginScene then
+      try
+
+        if Assigned(B) then
+        begin
+          r := TRectF.Create(PointF(0,0),B.Width,B.Height);
+          rd := TRectF.Create(PointF(X,Y),B.Width,B.Height);
+          DrawBitmap(B,r,rd,1);
+        end;
+
+      finally
+        EndScene;
+      end;
+
   {$IFDEF POSIX}
   InvalidateRect(fdrawrect);
   {$ENDIF}
@@ -210,8 +210,9 @@ end;
 procedure TMyPaintBox.EndDrawing(startP: TPointF);
 begin
   if (not fdrawing) then exit;
+
   pTo := PointF(startP.X,startP.Y);
-  DoDraw(fdrawbmp.Canvas,false);
+  DoDraw(fdrawbmp.Canvas, false);
 
   fdrawing := false;
   pFrom := PointF(-1, -1);
@@ -230,14 +231,13 @@ end;
 
 procedure TMyPaintBox.MouseLeave;
 begin
-  if (MouseDowned = False) then
-  begin
+  if (not MouseDowned) then
     if (not fdrawing) then
     begin
       //StartDrawing(PointF(X, Y));
     end;
-  end;
-  if (MouseMoved = False) then
+
+  if (not MouseMoved) then
   begin
     {$IFDEF MSWINDOWS}
     //pTo := PointF(X, Y);
