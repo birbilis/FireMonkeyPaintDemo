@@ -1,3 +1,3 @@
-# Delphi Firemonkey Drawing Commponent and Demo
+# Delphi Firemonkey Drawing Component and Demo
 
 Originated from https://www.fmxexpress.com/cross-platform-firemonkey-drawing-app-demo/
