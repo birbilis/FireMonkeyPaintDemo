@@ -92,18 +92,16 @@ end;
 
 procedure TMainForm.imgfClick(Sender: TObject);
 begin
-  lbdraw.Visible:=not lbdraw.Visible;
-
+  lbdraw.Visible := not lbdraw.Visible;
 end;
 
 procedure TMainForm.lbdrawChange(Sender: TObject);
 begin
-  imgf.Bitmap:=lbdraw.Selected.ItemData.Bitmap;
-  lbdraw.Visible:=false;
+  imgf.Bitmap := lbdraw.Selected.ItemData.Bitmap;
+  lbdraw.Visible := false;
+
   if assigned(fdrawbox) then
-  begin
-    fdrawbox.FuncDraw:=TFunctionDraw(lbdraw.ItemIndex);
-  end;
+    fdrawbox.FuncDraw := TFunctionDraw(lbdraw.ItemIndex);
 end;
 
 procedure TMainForm.sbimgselectClick(Sender: TObject);

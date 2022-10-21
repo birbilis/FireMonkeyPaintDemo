@@ -56,8 +56,8 @@ type
     procedure SaveToJPEGStream(Stream: TStream);
     procedure SaveToBitmap(B: TBitmap); overload;
     procedure LoadFromBitmap(B: TBitmap);
-    function GetWidth:Integer;
-    function GetHeight:Integer;
+    function GetBitmapWidth:Integer;
+    function GetBitmapHeight:Integer;
     procedure SaveToBitmap(B: TBitmap; Width, Height: Integer); overload;
     procedure StampBitmap(X,Y: Single; B: TBitmap);
     {$IFDEF POSIX}
@@ -81,18 +81,18 @@ end;
 constructor TMyPaintBox.Create(AOwner: TComponent);
 begin
   inherited;
-  fbmpstamp:=nil;
-  Parent:=TFmxObject(AOwner);
-  Align:= TAlignLayout.Client;
-  ffDraw:=TFunctionDraw.fdPen;
-  fnofill:=false;
-  fDrawing:=false;
-  fThickness:=1;
+  fbmpstamp := nil;
+  Parent := TFmxObject(AOwner);
+  Align :=  TAlignLayout.Client;
+  ffDraw := TFunctionDraw.fdPen;
+  fnofill := false;
+  fDrawing := false;
+  fThickness := 1;
   pFrom := PointF(-1, -1);
   pTo := PointF(-1, -1);
 
-  fdrawrect:=RectF(0,0,self.Width, self.Height);
-  fdrawbmprect:=RectF(0,0,self.Width, self.Height);
+  fdrawrect := RectF(0,0,self.Width, self.Height);
+  fdrawbmprect := RectF(0,0,self.Width, self.Height);
   fdrawbmp := TBitmap.Create(Round(fdrawbmprect.Width),Round(fdrawbmprect.Height));
 
   SetBackgroundColor(TAlphaColorRec.White);
@@ -106,18 +106,18 @@ end;
 
 destructor TMyPaintBox.Destroy;
 begin
-  if (assigned(fcbrush)) then
+  if (Assigned(fcbrush)) then
     fcbrush.Free;
-  if (assigned(fcstroke)) then
+  if (Assigned(fcstroke)) then
     fcstroke.Free;
-  if (assigned(fdrawbmp)) then
+  if (Assigned(fdrawbmp)) then
     fdrawbmp.Free;
-  if assigned(fbmpstamp) then
+  if Assigned(fbmpstamp) then
     fbmpstamp.Free;
 
   {$IFDEF POSIX}
-  if assigned ( ffillBrush ) then
-    FreeAndNil ( ffillBrush );
+  if Assigned(ffillBrush) then
+    FreeAndNil(ffillBrush);
   {$ENDIF}
 
   inherited;
@@ -125,46 +125,65 @@ end;
 
 procedure TMyPaintBox.DoDraw(vCanvas: TCanvas; const drawall: boolean);
 var
-r,rd:TRectF;
+  r,rd:TRectF;
 begin
-  if (drawall) then  self.Canvas.DrawBitmap(fdrawbmp,fdrawrect,fdrawrect,1);
+  if (drawall) then
+    self.Canvas.DrawBitmap(fdrawbmp,fdrawrect,fdrawrect,1);
+
   if (ffdraw=TFunctionDraw.fdNone) or (not fdrawing) then exit;
 
-  r:=TRectF.Create(pFrom,pTo);
+  r := TRectF.Create(pFrom,pTo);
+
   with vCanvas do
   begin
-  BeginScene();
-  case ffdraw of
-  {$IFDEF MSWINDOWS}
-  TFunctionDraw.fdPen:begin
-      DrawLine(pFrom,pTo,1,fcstroke);
-  end;
-  {$ENDIF}
-  TFunctionDraw.fdLine:begin
-      DrawLine(pFrom,pTo,1,fcstroke);
-  end;
-  TFunctionDraw.fdRectangle:begin
-      if not fnofill then
-        FillRect(r,0,0,[TCorner.TopLeft],1,fcbrush);
-      DrawRect(r,0,0,[TCorner.TopLeft],1,fcstroke);
-  end;
-  TFunctionDraw.fdEllipse:begin
-    if not fnofill then
-         FillEllipse(r,1,fcbrush);
-      {$IFDEF VER310}
-      DrawEllipse(r,1,fcstroke);
+    BeginScene;
+
+    case ffdraw of
+      {$IFDEF MSWINDOWS}
+      TFunctionDraw.fdPen:
+      begin
+          DrawLine(pFrom,pTo,1,fcstroke);
+      end;
       {$ENDIF}
-  end;
-  TFunctionDraw.fdFillBgr:begin
-      Clear(fbgColor);
-  end;
-  TFunctionDraw.fdBitmapStamp:if (assigned(fbmpstamp)) then begin
-    r:=TRectF.Create(PointF(0,0),fbmpstamp.Width,fbmpstamp.Height);
-    rd:=TRectF.Create(PointF(pTo.X,pTo.Y),fbmpstamp.Width,fbmpstamp.Height);
-    DrawBitmap(fbmpstamp,r,rd,1);
-  end;
-  end;
-  EndScene;
+
+      TFunctionDraw.fdLine:
+      begin
+          DrawLine(pFrom,pTo,1,fcstroke);
+      end;
+
+      TFunctionDraw.fdRectangle:
+      begin
+          if not fnofill then
+            FillRect(r,0,0,[TCorner.TopLeft],1,fcbrush);
+          DrawRect(r,0,0,[TCorner.TopLeft],1,fcstroke);
+      end;
+
+      TFunctionDraw.fdEllipse:
+      begin
+        if not fnofill then
+          FillEllipse(r,1,fcbrush);
+
+        {$IFDEF VER310}
+        DrawEllipse(r,1,fcstroke);
+        {$ENDIF}
+      end;
+
+      TFunctionDraw.fdFillBgr:
+      begin
+          Clear(fbgColor);
+      end;
+
+      TFunctionDraw.fdBitmapStamp:
+        if (Assigned(fbmpstamp)) then
+        begin
+          r := TRectF.Create(PointF(0,0),fbmpstamp.Width,fbmpstamp.Height);
+          rd := TRectF.Create(PointF(pTo.X,pTo.Y),fbmpstamp.Width,fbmpstamp.Height);
+          DrawBitmap(fbmpstamp,r,rd,1);
+        end;
+
+    end;
+
+    EndScene;
   end;
 end;
 
@@ -175,10 +194,10 @@ begin
   with fdrawbmp.Canvas do
   begin
   BeginScene();
-    if (assigned(B)) then
+    if (Assigned(B)) then
      begin
-      r:=TRectF.Create(PointF(0,0),B.Width,B.Height);
-      rd:=TRectF.Create(PointF(X,Y),B.Width,B.Height);
+      r := TRectF.Create(PointF(0,0),B.Width,B.Height);
+      rd := TRectF.Create(PointF(X,Y),B.Width,B.Height);
       DrawBitmap(B,r,rd,1);
      end;
   EndScene;
@@ -194,7 +213,7 @@ begin
   pTo := PointF(startP.X,startP.Y);
   DoDraw(fdrawbmp.Canvas,false);
 
-  fdrawing:=false;
+  fdrawing := false;
   pFrom := PointF(-1, -1);
   pTo := PointF(-1, -1);
 end;
@@ -227,11 +246,12 @@ begin
       TFunctionDraw.fdPen: //if (pFrom<>pTo) then
       begin
       DoDraw(fdrawbmp.Canvas,false);
-        pFrom:=pTo;
+        pFrom := pTo;
       end;
     end;
     {$ENDIF}
   end;
+
   MouseMoved := False;
   MouseDowned := False;
   fdrawing := False;
@@ -242,69 +262,71 @@ begin
   {$ENDIF}
 end;
 
-procedure TMyPaintBox.MouseDown(Button: TMouseButton; Shift: TShiftState; X,
-  Y: Single);
+procedure TMyPaintBox.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 begin
   inherited;
+
   if (not fdrawing) then
-  begin
     StartDrawing(PointF(X, Y));
-  end;
+
   MouseDowned := True;
 end;
 
 procedure TMyPaintBox.MouseMove(Shift: TShiftState; X, Y: Single);
 {$IFDEF POSIX}
 var
-Radius       : Single;
-xDir, yDir   : Single;
-Dx, Dy       : Single;
-Ratio        : Single;
-MoveX, MoveY : Single;
+  Radius       : Single;
+  xDir, yDir   : Single;
+  Dx, Dy       : Single;
+  Ratio        : Single;
+  MoveX, MoveY : Single;
 {$ENDIF}
 begin
   inherited;
+
   if (not fdrawing) then exit;
 
-{$IFDEF POSIX}
+  {$IFDEF POSIX}
   Radius := fThickness / 2;
-{$ENDIF}
+  {$ENDIF}
 
   pTo := PointF(X, Y);
+
   InvalidateRect(fdrawrect);
+
   case ffdraw of
     TFunctionDraw.fdPen:
     begin
-    {$IFDEF POSIX}
+      {$IFDEF POSIX}
       if ( pFrom.Round <> pTo.Round ) then
         begin
          { Direction detection from pFrom to pTo }
          { to adjust start center                }
 
-         IF pTo.Y >= pFrom.Y THEN yDir := -1 ELSE yDir := 1;
-         IF pTo.X >= pFrom.X THEN xDir := -1 ELSE xDir := 1;
+         if pTo.Y >= pFrom.Y then yDir := -1 else yDir := 1;
+         if pTo.X >= pFrom.X then xDir := -1 else xDir := 1;
 
          { Quantify movement }
 
          Dx := ABS ( pTo.X - pFrom.X );
          Dy := ABS ( pTo.Y - pFrom.Y );
 
-         IF ABS ( Dy ) > ABS ( Dx ) THEN
-           Begin
-                Ratio   := ABS ( Radius / Dy * Dx );
-                MoveY   := Radius  * yDir;
-                pFrom.Y := pFrom.Y + MoveY;
-                MoveX   := Ratio   * xDir;
-                pFrom.X := pFrom.X + MoveX;
-           End
-         ELSE
-           Begin
-                Ratio   := ABS ( Radius / Dx * Dy );
-                MoveX   := Radius  * xDir;
-                pFrom.X := pFrom.X + MoveX;
-                MoveY   := Ratio   * yDir;
-                pFrom.Y := pFrom.Y + MoveY;
-           End;
+         if ABS ( Dy ) > ABS ( Dx ) then
+           begin
+              Ratio   := ABS ( Radius / Dy * Dx );
+              MoveY   := Radius  * yDir;
+              pFrom.Y := pFrom.Y + MoveY;
+              MoveX   := Ratio   * xDir;
+              pFrom.X := pFrom.X + MoveX;
+           end
+         else
+           begin
+              Ratio   := ABS ( Radius / Dx * Dy );
+              MoveX   := Radius  * xDir;
+              pFrom.X := pFrom.X + MoveX;
+              MoveY   := Ratio   * yDir;
+              pFrom.Y := pFrom.Y + MoveY;
+           end;
 
          fdrawbmp.Canvas.BeginScene ();
             fdrawbmp.Canvas.DrawLine ( pFrom, pTo, 1, ffillBrush );
@@ -321,35 +343,38 @@ begin
          Dx := ABS ( pTo.X - pFrom.X );
          Dy := ABS ( pTo.Y - pFrom.Y );
 
-         IF ABS ( Dy ) > ABS ( Dx ) THEN
-           Begin
+         if ABS ( Dy ) > ABS ( Dx ) then
+           begin
                 Ratio   := ABS ( Radius / Dy * Dx );
                 MoveY   := Radius * yDir;
                 pFrom.Y := pTo.Y  + MoveY;
                 MoveX   := Ratio  * xDir;
                 pFrom.X := pTo.X  + MoveX;
-           End
-         ELSE
-           Begin
+           end
+         else
+           begin
                 Ratio   := ABS ( Radius / Dx * Dy );
                 MoveX   := Radius * xDir;
                 pFrom.X := pTo.X  + MoveX;
                 MoveY   := Ratio  * yDir;
                 pFrom.Y := pTo.Y  + MoveY;
-           End;
+           end;
         end;
-      {$ENDIF}
-      {$IFDEF MSWINDOWS}
+        {$ENDIF}
+
+        {$IFDEF MSWINDOWS}
 	      DoDraw(fdrawbmp.Canvas,false);
-	      pFrom:=pTo;
-      {$ENDIF}
+	      pFrom := pTo;
+        {$ENDIF}
     end;
+
     TFunctionDraw.fdBitmapStamp: //if (pFrom<>pTo) then
     begin
       DoDraw(fdrawbmp.Canvas,false);
-      pFrom:=pTo;
+      pFrom := pTo;
     end;
   end;
+
   MouseMoved := True;
 end;
 
@@ -364,6 +389,7 @@ begin
       StartDrawing(PointF(X, Y));
     end;
   end;
+
   if (MouseMoved = False) then
   begin
     {$IFDEF MSWINDOWS}
@@ -372,12 +398,13 @@ begin
     case ffdraw of
       TFunctionDraw.fdPen: //if (pFrom<>pTo) then
       begin
-      DoDraw(fdrawbmp.Canvas,false);
-        pFrom:=pTo;
+        DoDraw(fdrawbmp.Canvas,false);
+        pFrom := pTo;
       end;
     end;
     {$ENDIF}
   end;
+
   MouseMoved := False;
   MouseDowned := False;
 
@@ -385,13 +412,14 @@ begin
   {$IFDEF POSIX}
   InvalidateRect(fdrawrect);
   {$ENDIF}
-  
 end;
 
 procedure TMyPaintBox.Paint;
 begin
   inherited;
+
   if (csDesigning in ComponentState) then exit;
+
   DoDraw(self.Canvas);
 end;
 
@@ -403,7 +431,7 @@ begin
   Surf := TBitmapSurface.Create;
   try
     Surf.Assign(fdrawbmp);
-    saveparams.Quality:=93; // <-- always stops here with an AV error
+    saveparams.Quality := 93; // <-- always stops here with an AV error
     TBitmapCodecManager.SaveToStream(Stream, Surf, '.jpg',@saveParams);
   finally
     Surf.Free;
@@ -429,32 +457,31 @@ begin
 	end;
 end;
 
-
 procedure TMyPaintBox.LoadFromBitmap(B: TBitmap);
 var
-r,rd: TRectF;
+  r,rd: TRectF;
 begin
   try
-    if assigned(fdrawbmp) then
+    if Assigned(fdrawbmp) then
      begin
-      r:=TRectF.Create(PointF(0,0),B.Width,B.Height);
-      rd:=TRectF.Create(PointF(0,0),B.Width,B.Height);
-      fdrawbmp.Canvas.BeginScene();
-      fdrawbmp.Canvas.DrawBitmap(B,r,rd,1);
-      fdrawbmp.Canvas.EndScene;
-      InvalidateRect(fdrawrect);
+        r := TRectF.Create(PointF(0,0),B.Width,B.Height);
+        rd := TRectF.Create(PointF(0,0),B.Width,B.Height);
+        fdrawbmp.Canvas.BeginScene();
+        fdrawbmp.Canvas.DrawBitmap(B,r,rd,1);
+        fdrawbmp.Canvas.EndScene;
+        InvalidateRect(fdrawrect);
      end;
   finally
+    //TODO: ???
   end;
 end;
 
-
-function TMyPaintBox.GetWidth: Integer;
+function TMyPaintBox.GetBitmapWidth: Integer;
 begin
   Result := fdrawbmp.Width;
 end;
 
-function TMyPaintBox.GetHeight: Integer;
+function TMyPaintBox.GetBitmapHeight: Integer;
 begin
   Result := fdrawbmp.Height;
 end;
@@ -462,31 +489,37 @@ end;
 procedure TMyPaintBox.SetBackgroundColor(v: TAlphaColor);
 begin
   if (v=fbgColor) then exit;
-  if (assigned(fcbrush)) then
+
+  if (Assigned(fcbrush)) then
     fcbrush.Free;
-  fbgColor:=v;
-  fcbrush:=TBrush.Create(TBrushKind.Solid,fbgColor);
+
+  fbgColor := v;
+  fcbrush := TBrush.Create(TBrushKind.Solid,fbgColor);
 end;
 
 procedure TMyPaintBox.SetBitmapStamp(v: TBitmap);
 begin
-  if not assigned(v) then exit;
-  if assigned(fbmpstamp) then
+  if not Assigned(v) then exit;
+
+  if Assigned(fbmpstamp) then
     fbmpstamp.Free;
-  fbmpstamp:=TBitmap.Create(0,0);
+
+  fbmpstamp := TBitmap.Create(0,0);
   fbmpstamp.Assign(v);
 end;
 
 procedure TMyPaintBox.SetForegroundColor(v: TAlphaColor);
 begin
   if (v=ffgColor) then exit;
-  if (assigned(fcstroke)) then
-    fcstroke.Free;
-  ffgColor:=v;
 
-  fcstroke:=TStrokeBrush.Create(TBrushKind.Solid,ffgColor);
-  fcstroke.DefaultColor:=ffgColor;
-  fcstroke.Thickness:=fThickness;
+  if (Assigned(fcstroke)) then
+    fcstroke.Free;
+
+  ffgColor := v;
+
+  fcstroke := TStrokeBrush.Create(TBrushKind.Solid,ffgColor);
+  fcstroke.DefaultColor := ffgColor;
+  fcstroke.Thickness := fThickness;
 
   {$IFDEF POSIX}
   ffillermod;
@@ -496,25 +529,26 @@ end;
 procedure TMyPaintBox.SetNoFill(v: boolean);
 begin
   if fnofill<>v then
-    fnofill:=v;
+    fnofill := v;
 end;
 
 procedure TMyPaintBox.SetThickness(v: Single);
 begin
   if (v=fThickness) then exit;
-  if (assigned(fcstroke)) then
-    fcstroke.Free;
-  fThickness:=v;
 
-  fcstroke:=TStrokeBrush.Create(TBrushKind.Solid,ffgColor);
-  fcstroke.DefaultColor:=ffgColor;
-  fcstroke.Thickness:=fThickness;
+  if (Assigned(fcstroke)) then
+    fcstroke.Free;
+
+  fThickness := v;
+
+  fcstroke := TStrokeBrush.Create(TBrushKind.Solid, ffgColor);
+  fcstroke.DefaultColor := ffgColor;
+  fcstroke.Thickness := fThickness;
   fcstroke.Cap := TStrokeCap.Round;
 
   {$IFDEF POSIX}
   ffillermod;
   {$ENDIF}
-
 end;
 
 procedure TMyPaintBox.StartDrawing(startP: TPointF);
@@ -524,20 +558,20 @@ begin
 
   pFrom := PointF(startP.X, startP.Y);
   pTo := PointF(startP.X, startP.Y);
-  fDrawing:=true;
+  fDrawing := true;
 end;
 
 {$IFDEF POSIX}
 procedure TMyPaintBox.FFillerMod;
 Begin
-     IF NOT Assigned ( ffillBrush ) THEN ffillBrush := TStrokeBrush.Create ( TBrushKind.bkSolid, ffgcolor );
+  if not Assigned(ffillBrush) then
+   ffillBrush := TStrokeBrush.Create(TBrushKind.bkSolid, ffgcolor);
 
-     ffillBrush.Thickness := fThickness;
-     ffillBrush.Cap       := TStrokeCap.scRound;
-     ffillBrush.Join      := TStrokeJoin.sjRound;
-     ffillBrush.Color     := ffgcolor;
+  ffillBrush.Thickness := fThickness;
+  ffillBrush.Cap       := TStrokeCap.scRound;
+  ffillBrush.Join      := TStrokeJoin.sjRound;
+  ffillBrush.Color     := ffgcolor;
 End;
 {$ENDIF}
-
 
 end.
